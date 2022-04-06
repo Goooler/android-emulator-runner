@@ -65,6 +65,10 @@ jobs:
       with:
         distribution: 'zulu'
         java-version: 15
+
+    - name: Gradle cache
+      uses: gradle/gradle-build-action@v2
+
     - uses: actions/cache@v3
       id: avd-cache
       with:
@@ -75,10 +79,9 @@ jobs:
         key: avd-${{ matrix.api-level }}-${{ matrix.os }}-${{ matrix.target }}
 
     - name: assemble tests
-      uses: gradle/gradle-build-action@v2
-      with:
-        build-root-directory: test-fixture
-        arguments: assembleAndroidTest
+      run: |
+        cd ./test-fixture/
+        ./gradlew assembleAndroidTest
 
     - name: run emulator to generate snapshot for caching
       if: steps.avd-cache.outputs.cache-hit != 'true'
